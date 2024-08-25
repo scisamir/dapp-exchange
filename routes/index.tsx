@@ -1,4 +1,3 @@
-import { Head } from "$fresh/runtime.ts";
 import AppStateComponent from "../islands/AppStateComponent.tsx";
 
 export default function Home() {

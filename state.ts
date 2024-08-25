@@ -3,12 +3,14 @@ import { Signal, signal, computed } from "@preact/signals";
 
 export type AppStateType = {
     lucid: Signal<Lucid | null>;
+    walletBalance: Signal<number>;
 }
 
 function createAppState(): AppStateType {
-    const lucid = signal<Lucid>(null);
+    const lucid = signal<Lucid | null>(null);
+    const walletBalance = signal<number>(0);
 
-    return { lucid };
+    return { lucid, walletBalance };
 }
 
 export default createAppState();

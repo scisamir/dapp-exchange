@@ -1,13 +1,13 @@
-import { Blockfrost, Lucid, fromHex } from "lucid/mod.ts";
+import { Blockfrost, Lucid, type WalletApi } from "lucid/mod.ts";
 import { useContext, useEffect, useState } from "preact/hooks";
 import { Button } from "../components/Button.tsx";
 import { AppState } from "./AppStateComponent.tsx";
+import { getBalance } from "~/utils.ts";
 
 export default function Welcome() {
-    const { lucid } = useContext(AppState);
+    const { lucid, walletBalance } = useContext(AppState);
 
-    const [userWallet, setUserWallet] = useState<any>(null);
-    const [walletBalance, setWalletBalance] = useState<any>(null);
+    const [userWallet, setUserWallet] = useState<WalletApi | null>(null);
 
     const setUpLucid = async (e: Event) => {
         e.preventDefault();
@@ -24,6 +24,7 @@ export default function Welcome() {
 
         lucid.value = newLucid;
 
+        // log to be removed
         console.log("Lucid.value:");
         console.log(lucid.value);
     };
@@ -31,31 +32,15 @@ export default function Welcome() {
     useEffect(() => {
         if (lucid.value) {
             window.cardano.eternl.enable().then((wallet) => {
-                lucid.value.selectWallet(wallet);
+                lucid?.value?.selectWallet(wallet);
                 setUserWallet(wallet);
             });
         }
     }, [lucid.value]);
 
-    const getBalance = async () => {
-        try {
-            const utxos = await lucid.value.wallet.getUtxos();
-
-            let lovelace = BigInt(0);
-            for (let i in utxos) {
-                lovelace += utxos[i].assets.lovelace;
-            }
-
-            let balance = Number(lovelace) / 1000000;
-            setWalletBalance(balance);
-        } catch (err) {
-            console.log(err);
-        }
-    }
-
     useEffect(() => {
         if (userWallet) {
-            getBalance();
+            getBalance(lucid, walletBalance);
         }
     }, [userWallet]);
 
@@ -63,7 +48,6 @@ export default function Welcome() {
         <>
             <div class="mt-10 grid grid-cols-1 gap-y-8">
                 <Button onClick={setUpLucid}>Connect Wallet</Button>
-                {userWallet && <p class="font-md text-bold">Balance: {walletBalance}  ADA</p>}
             </div>
         </>
     );

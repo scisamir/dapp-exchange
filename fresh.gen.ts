@@ -10,6 +10,8 @@ import * as $greet_name_ from "./routes/greet/[name].tsx";
 import * as $index from "./routes/index.tsx";
 import * as $AppStateComponent from "./islands/AppStateComponent.tsx";
 import * as $Dapp from "./islands/Dapp.tsx";
+import * as $LockADA from "./islands/LockADA.tsx";
+import * as $SendADA from "./islands/SendADA.tsx";
 import * as $Welcome from "./islands/Welcome.tsx";
 import { type Manifest } from "$fresh/server.ts";
 
@@ -25,6 +27,8 @@ const manifest = {
   islands: {
     "./islands/AppStateComponent.tsx": $AppStateComponent,
     "./islands/Dapp.tsx": $Dapp,
+    "./islands/LockADA.tsx": $LockADA,
+    "./islands/SendADA.tsx": $SendADA,
     "./islands/Welcome.tsx": $Welcome,
   },
   baseUrl: import.meta.url,

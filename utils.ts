@@ -1,9 +1,12 @@
-import { Lucid } from "lucid/mod.ts";
+import { applyDoubleCborEncoding, Lucid, SpendingValidator } from "lucid/mod.ts";
 import { Signal } from "@preact/signals";
 
-export const getBalance = async (lucid: Signal<Lucid | null>, walletBalance: Signal<number>) => {
+import blueprint from "~/plutus.json" assert { type: "json" };
+
+// Returns user wallet's balance
+export const getBalance = async (lucid: Lucid | null, walletBalance: Signal<number>) => {
     try {
-        const utxos = await lucid?.value?.wallet.getUtxos();
+        const utxos = await lucid?.wallet.getUtxos();
 
         let lovelace = BigInt(0);
         for (let i = 0; i < utxos?.length!; i++) {
@@ -19,4 +22,25 @@ export const getBalance = async (lucid: Signal<Lucid | null>, walletBalance: Sig
     } catch (err) {
         console.log(err);
     }
+}
+
+
+// Returns the staking validator
+export type Validators = {
+    lock: SpendingValidator;
+}
+
+export function readValidators(): Validators {
+    const stake = blueprint.validators.find(v => v.title === "staking.vesting");
+
+    if (!stake) {
+        throw new Error("Stake validator not found");
+    }
+
+    return {
+        lock: {
+            type: "PlutusV2",
+            script: applyDoubleCborEncoding(stake.compiledCode)
+        },
+    };
 }

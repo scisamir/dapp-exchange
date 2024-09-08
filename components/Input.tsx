@@ -7,7 +7,7 @@ export function Input({
 }: JSX.HTMLAttributes<HTMLInputElement>) {
   return (
     <div>
-      <label for={id} class="block mb-3 text-sm font-medium text-gray-700">
+      <label for={id} class="block mb-3 text-sm font-medium text-gray-700 mt-4">
         {children}
       </label>
       <input

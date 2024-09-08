@@ -1,93 +1,49 @@
-import { useContext, useState } from "preact/hooks";
-import { AppState } from "./AppStateComponent.tsx";
-import { Button } from "~/components/Button.tsx";
-import { Input } from "~/components/Input.tsx";
-import { getBalance } from "~/utils.ts";
+import { useContext, useState } from "preact/hooks"
+import { AppState } from "~/islands/AppStateComponent.tsx";
+import SendADA from "~/islands/SendADA.tsx";
+import LockADA from "~/islands/LockADA.tsx";
+import { JSX } from "preact/jsx-runtime";
+
+const pages: { [key: string]: JSX.Element } = {
+    send: <SendADA />,
+    lock: <LockADA />,
+    gift: <p>Coming soon!</p>,
+    trade: <p>Coming soon!</p>
+};
 
 export default function Dapp() {
-    const { lucid, walletBalance } = useContext(AppState);
+    const { walletBalance } = useContext(AppState);
 
-    const [sendADA, setSendADA] = useState<string>("");
-    const [sendADAAddress, setSendADAAddress] = useState<string>("");
-    const [waitingSendADA, setWaitingSendADA] = useState<boolean>(false);
-    const [sendADATxHash, setSendADATxHash] = useState<string>("");
+    const [currentPage, setCurrentPage] = useState<string>("send");
 
-    const handleSendADA = async () => {
-        setWaitingSendADA(true);
-
-        try {
-            const adaAmount = Number(sendADA) * 1000000;
-
-            const tx = await lucid.value!.newTx()
-                .payToAddress(sendADAAddress, { lovelace: BigInt(adaAmount) })
-                .complete();
-
-            const signedTx = await tx.sign().complete();
-
-            const txHash = await signedTx.submit();
-
-            const success = await lucid.value?.awaitTx(txHash);
-
-            setTimeout(() => {
-                setWaitingSendADA(false);
-
-                if (success) {
-                    setSendADATxHash(txHash);
-                    getBalance(lucid, walletBalance);
-                }
-            }, 2000);
-        } catch (err) {
-            setWaitingSendADA(false);
-            console.log(err);
-        }
+    const handleDappNavigation = (page: string) => {
+        setCurrentPage(page);
     }
 
     return (
         <>
             <p class="font-semibold float-right mr-3">Wallet balance: {walletBalance.value}</p>
-
-            <div class="mt-6">
-                <h2 class="mt-6 text-lg">Send ADA</h2>
-                <Input
-                    type="text"
-                    name="sendADAAddress"
-                    id="sendADAAddress"
-                    value={sendADAAddress}
-                    onInput={(e) => setSendADAAddress(e.currentTarget.value)}
-                >
-                    Address of Recepient:
-                </Input>
-                <Input
-                    type="text"
-                    name="sendADA"
-                    id="sendADA"
-                    value={sendADA}
-                    class="mt-4"
-                    onInput={(e) => setSendADA(e.currentTarget.value)}
-                >
-                    Amount of ADA:
-                </Input>
-                <Button
-                    onClick={handleSendADA}
-                    disabled={waitingSendADA}
-                    class="mt-6"
-                >
-                    {waitingSendADA ? "Waiting for Tx..." : "Send"}
-                </Button>
-
-                {sendADATxHash && (
-                    <>
-                        <h3 class="mt-4 mb-2">Ada Sent!</h3>
-                        <a
-                            target="_blank"
-                            class="mb-2 text-blue-500"
-                            href={`https://preprod.cardanoscan.io/transaction/${sendADATxHash}`}
-                        >
-                            View on cardanoscan; {sendADATxHash}
-                        </a>
-                    </>
-                )}
-            </div>
+            <nav class="mt-14 mb-2">
+                <ul class="flex flex-row justify-around p-4 border border-gray-400 rounded-md">
+                    <li
+                        class={`p-2 text-lg font-bold border rounded-lg cursor-pointer ${currentPage === "send" ? "bg-blue-600 text-white" : "bg-blue-200 text-gray-600"}`}
+                        onClick={() => handleDappNavigation("send")}
+                    >Send</li>
+                    <li
+                        class={`p-2 text-lg font-bold border rounded-lg cursor-pointer ${currentPage === "lock" ? "bg-blue-600 text-white" : "bg-blue-200 text-gray-600"}`}
+                        onClick={() => handleDappNavigation("lock")}
+                    >Lock</li>
+                    <li
+                        class={`p-2 text-lg font-bold border rounded-lg cursor-pointer ${currentPage === "gift" ? "bg-blue-600 text-white" : "bg-blue-200 text-gray-600"}`}
+                        onClick={() => handleDappNavigation("gift")}
+                    >Gift Card</li>
+                    <li
+                        class={`p-2 text-lg font-bold border rounded-lg cursor-pointer ${currentPage === "trade" ? "bg-blue-600 text-white" : "bg-blue-200 text-gray-600"}`}
+                        onClick={() => handleDappNavigation("trade")}
+                    >Trade</li>
+                </ul>
+            </nav>
+            {pages[currentPage]}
         </>
     );
 }

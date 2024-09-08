@@ -5,7 +5,7 @@ import { AppState } from "./AppStateComponent.tsx";
 import { getBalance } from "~/utils.ts";
 
 export default function Welcome() {
-    const { lucid, walletBalance } = useContext(AppState);
+    const { lucidSignal, walletBalance } = useContext(AppState);
 
     const [userWallet, setUserWallet] = useState<WalletApi | null>(null);
 
@@ -22,21 +22,23 @@ export default function Welcome() {
             "Preprod"
         );
 
-        lucid.value = newLucid;
+        lucidSignal.value = newLucid;
 
         // log to be removed
         console.log("Lucid.value:");
-        console.log(lucid.value);
+        console.log(lucidSignal.value);
     };
 
+    const lucid = lucidSignal.value;
+
     useEffect(() => {
-        if (lucid.value) {
+        if (lucid) {
             window.cardano.eternl.enable().then((wallet) => {
-                lucid?.value?.selectWallet(wallet);
+                lucid.selectWallet(wallet);
                 setUserWallet(wallet);
             });
         }
-    }, [lucid.value]);
+    }, [lucid]);
 
     useEffect(() => {
         if (userWallet) {

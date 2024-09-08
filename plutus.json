@@ -1,0 +1,71 @@
+{
+  "preamble": {
+    "title": "scisamir/dapp-exchange",
+    "description": "Aiken contracts for project 'scisamir/dapp-exchange'",
+    "version": "0.0.0",
+    "plutusVersion": "v2",
+    "compiler": {
+      "name": "Aiken",
+      "version": "v1.0.29-alpha+16fb02e"
+    },
+    "license": "Apache-2.0"
+  },
+  "validators": [
+    {
+      "title": "staking.vesting",
+      "datum": {
+        "title": "datum",
+        "schema": {
+          "$ref": "#/definitions/staking~1Datum"
+        }
+      },
+      "redeemer": {
+        "title": "_redeemer",
+        "schema": {
+          "$ref": "#/definitions/Void"
+        }
+      },
+      "compiledCode": "590139010000323232323232232232253330063253330073370e900118041baa300130093754004264a666010664464660020026eb0c03cc040c040c040c040c040c040c040c040c034dd50019129998078008a50132533300d3371e6eb8c0440080105288998018018009808800980098051baa003375c600460146ea801c4cc88c94ccc02ccdc3a400460186ea80044cdc48011bad300f300d37540022940c00cc030dd5180198061baa002300c300d300d300d300d300d300d300d300a3754600260146ea800cdd6980098051baa00714a04601800229408c02cc030004526136563253330053370e900018030008a99980418038008a4c2c2c6ea80054ccc008cdc3a400060066ea80044c8c8c8c94ccc024c02c00852616375c601200260120046eb4c01c004c010dd50008b2b9a5573aaae7955cfaba157441",
+      "hash": "5246395f06afdbce196999c1c558847ab5116081a1cd17d729168799"
+    }
+  ],
+  "definitions": {
+    "ByteArray": {
+      "dataType": "bytes"
+    },
+    "Int": {
+      "dataType": "integer"
+    },
+    "Void": {
+      "title": "Unit",
+      "description": "The nullary constructor.",
+      "anyOf": [
+        {
+          "dataType": "constructor",
+          "index": 0,
+          "fields": []
+        }
+      ]
+    },
+    "staking/Datum": {
+      "title": "Datum",
+      "anyOf": [
+        {
+          "title": "Datum",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "lock_until",
+              "$ref": "#/definitions/Int"
+            },
+            {
+              "title": "locker",
+              "$ref": "#/definitions/ByteArray"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
